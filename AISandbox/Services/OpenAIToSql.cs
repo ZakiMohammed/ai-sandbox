@@ -6,7 +6,7 @@ using OpenAI.Chat;
 
 namespace AISandbox.Services
 {
-    public static class TextToOpenAI
+    public static class OpenAIToSql
     {
         public static async Task Run(IConfiguration config)
         {
@@ -17,7 +17,7 @@ namespace AISandbox.Services
             var uri = new Uri(openAIApiUrl!);
             var apiKeyCredential = new AzureKeyCredential(openAIKey!);
             var openAIClient = new AzureOpenAIClient(uri, apiKeyCredential);
-            
+
             var chatClient = openAIClient.GetChatClient(openAIModel!);
 
             var conversation = string.Empty;
@@ -44,7 +44,7 @@ BotResponse:{response}
         private static async Task<string> GetResponseAsync(ChatClient client, string input, string history)
         {
             string prompt = @$"
-{AppSettings.PromptGuide}
+{AppSettings.PromptSqlGuide}
         
 # Question
 {input}
@@ -57,7 +57,7 @@ YourAnswer:
 
             var chatMessages = new List<ChatMessage>
             {
-                ChatMessage.CreateSystemMessage(AppSettings.PromptSystemGuide),
+                ChatMessage.CreateSystemMessage(AppSettings.PromptSqlSystemGuide),
                 ChatMessage.CreateUserMessage(prompt),
             };
             var compleition = await client.CompleteChatAsync(chatMessages);

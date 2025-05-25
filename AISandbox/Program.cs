@@ -17,4 +17,7 @@ var config = builder.Build();
 //await SpeechToSpeech.Run(config);
 
 // For Text to OpenAI
-await TextToOpenAI.Run(config);
+//await TextToOpenAI.Run(config);
+
+// For OpenAI to SQL
+await OpenAIToSql.Run(config);
