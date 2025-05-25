@@ -7,4 +7,14 @@ var builder = new ConfigurationBuilder()
 
 var config = builder.Build();
 
-await SpeechToText.Run(config);
+// For Speech to Text
+// await SpeechToText.Run(config);
+
+// For Text to Speech
+//await TextToSpeech.Run(config);
+
+// For Speech to Speech Translation
+//await SpeechToSpeech.Run(config);
+
+// For Text to OpenAI
+await TextToOpenAI.Run(config);

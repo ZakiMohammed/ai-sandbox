@@ -1,11 +1,11 @@
 ﻿using AISandbox.Utils;
-using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.Extensions.Configuration;
 
 namespace AISandbox.Services
 {
-    public static class SpeechToText
+    public static class TextToSpeech
     {
         public static async Task Run(IConfiguration config)
         {
@@ -13,28 +13,26 @@ namespace AISandbox.Services
             string? speechRegion = config[AppSettings.SpeechRegion];
 
             var speechConfig = SpeechConfig.FromSubscription(speechKey, speechRegion);
-            speechConfig.SpeechRecognitionLanguage = "en-US";
+            speechConfig.SpeechSynthesisVoiceName = AppSettings.SpeechSynthesisVoiceName;
 
             var audioConfig = AudioConfig.FromDefaultMicrophoneInput();
 
-            var speechRecognizer = new SpeechRecognizer(speechConfig, audioConfig);
+            var speechSynthesis = new SpeechSynthesizer(speechConfig, audioConfig);
 
-            Console.WriteLine("Speech to Text\n");
-            Console.WriteLine("Speak into your microphone.");
+            Console.WriteLine("Text to Speech\n");
+            Console.Write("Enter some text you want app to speak: ");
+            var text = Console.ReadLine();
 
-            var result = await speechRecognizer.RecognizeOnceAsync();
+            var result = await speechSynthesis.SpeakTextAsync(text);
 
             switch (result.Reason)
             {
-                case ResultReason.RecognizedSpeech:
-                    Console.WriteLine($"Recognized: {result.Text}");
-                    break;
-                case ResultReason.NoMatch:
-                    Console.WriteLine("No speech could be recognized.");
+                case ResultReason.SynthesizingAudioCompleted:
+                    Console.WriteLine($"Speech synthesis for text [{text}]");
                     break;
                 case ResultReason.Canceled:
-                    var cancellation = CancellationDetails.FromResult(result);
-                    Console.WriteLine($"Speech recognition canceled: {cancellation.Reason}");
+                    var cancellation = SpeechSynthesisCancellationDetails.FromResult(result);
+                    Console.WriteLine($"Speech synthesis canceled: {cancellation.Reason}");
                     if (cancellation.Reason == CancellationReason.Error)
                     {
                         Console.WriteLine($"Error details: {cancellation.ErrorDetails}");
